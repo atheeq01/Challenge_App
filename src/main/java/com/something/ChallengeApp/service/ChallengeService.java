@@ -2,24 +2,22 @@ package com.something.ChallengeApp.service;
 
 import com.something.ChallengeApp.model.Challenge;
 import com.something.ChallengeApp.repository.ChallengeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 public class ChallengeService implements ChallengeServiceInter{
-    private List<Challenge> challenges= new ArrayList<>();
-    long id = 1L;
 
-    @Autowired
     public ChallengeRepository challengeRepository;
+
+    public ChallengeService(ChallengeRepository challengeRepository) {
+        this.challengeRepository = challengeRepository;
+    }
 
     @Override
     public  List<Challenge> getChallenges() {
@@ -29,7 +27,6 @@ public class ChallengeService implements ChallengeServiceInter{
     @Override
     public String createChallenges(Challenge challenge) {
         if (challenge != null) {
-            challenge.setId(id++);
             challengeRepository.save(challenge);
             return "created successfully";
         }else
@@ -45,7 +42,7 @@ public class ChallengeService implements ChallengeServiceInter{
 
     @Override
     public String updateChallenge(Challenge challenge, Long id) {
-        Challenge challengeFound = challengeRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Resource Not Found..."));
+        challengeRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Resource Not Found..."));
         challenge.setId(id);
         challengeRepository.save(challenge);
         return "successfully updated"+challenge.toString();
